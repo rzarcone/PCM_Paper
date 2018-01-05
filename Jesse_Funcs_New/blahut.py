@@ -348,15 +348,16 @@ def moments(Varray, Rarray):
     V_list = np.sort(np.unique(Varray))
     data_mean = np.zeros(V_list.size)
     data_std = np.zeros(V_list.size)
+    Vs = np.zeros(V_list.size)
 
     for i, v in enumerate(V_list):
         idx = (Varray == v)
         data = Rarray[idx]
         data_mean[i] = np.mean(data)
         data_std[i] = np.std(data)
+        Vs[i] = v
     
-    return data_mean, data_std
-    
+    return data_mean, data_std, Vs
 
 
 
