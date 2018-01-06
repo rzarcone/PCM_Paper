@@ -135,7 +135,7 @@ def super_channel(data_path, device_nums, diffs, colors, alphas):
     plt.savefig('super_channel.png')        
     
     plt.figure(figsize=(20,10))
-    data_mean, data_std = blahut.moments(V, R)    
+    data_mean, data_std, _ = blahut.moments(V, R)    
     new_Vs = np.linspace(np.amin(V), np.amax(V),len(data_mean))
     lower_Rs = data_mean-data_std
     upper_Rs = data_mean+data_std
@@ -162,16 +162,16 @@ Pyx, x, y = upsample_data(V_super, R_super, to_plot_or_not_to_plot = False, resa
 #==============================================================================
 # %% Nonuniform Spacing
 #==============================================================================
-nonequal_filename = 'C_nonequal_optimized_new_PCM.npz'
+nonequal_filename = 'C_nonequal_optimized_new_PCM_more_states.npz'
 new_run = False
-nx = 5
-ny = 5
-nbits=4
+nx = 6
+ny = 6
+nbits=5
 # write_read_list = [(0,0),(0,1),(1,0),(1,1),(0,2),(2,0),(1,2),(2,1),(2,2),(0,3),(3,0),(1,3),(3,1),(2,3),(3,2),(3,3)]
 # write_read_list = [(0,0),(0,1),(1,0),(1,1),(0,2),(2,0),(1,2),(2,1),(2,2)]
 # write_read_list = [(0,3),(3,0),(1,3),(3,1),(2,3),(3,2),(3,3)]
 # write_read_list = [(1,2),(1,3),(2,1)]
-write_read_list = [(3,2),(3,3)]
+write_read_list = [(4,4),(0,4),(1,4),(2,4)]
 
 if new_run:
     C_nonequal = zeros((nbits, nbits))
@@ -232,7 +232,7 @@ def find_peaks(Px):
     peak = logical_and( logical_and(Px > append(0, Px[:-1]), Px > append(Px[1:],0)), Px > 2e-4)
     return where(peak)
 
-for it in range(500):
+for it in range(200):
     print (it)
     for ix, iy in write_read_list:
         ny, nx = (xy[0][ix,iy], xy[1][ix,iy])
@@ -254,7 +254,7 @@ for it in range(500):
         result = optimize.basinhopping(objective, 
                                        x0=x0, 
                                        minimizer_kwargs=minimizer_kwargs,
-                                           niter=600, #used to be 50, then 100, 200, 300
+                                           niter=50, #used to be 50, then 100, 200, 300, 600
                                        stepsize=0.2, #used to be 0.5 #then was 0.1, 0.2, 0.3, 0.2
                                        T=0.5,
                                        accept_test=accept_test)
