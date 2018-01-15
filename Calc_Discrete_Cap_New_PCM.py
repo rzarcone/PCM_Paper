@@ -171,7 +171,8 @@ nbits=5
 # write_read_list = [(0,0),(0,1),(1,0),(1,1),(0,2),(2,0),(1,2),(2,1),(2,2)]
 # write_read_list = [(0,3),(3,0),(1,3),(3,1),(2,3),(3,2),(3,3)]
 # write_read_list = [(1,2),(1,3),(2,1)]
-write_read_list = [(4,4),(0,4),(1,4),(2,4)]
+# write_read_list = [(4,4),(0,4),(1,4),(2,4)]
+write_read_list = [(4,3)]
 
 if new_run:
     C_nonequal = zeros((nbits, nbits))
@@ -254,7 +255,7 @@ for it in range(200):
         result = optimize.basinhopping(objective, 
                                        x0=x0, 
                                        minimizer_kwargs=minimizer_kwargs,
-                                           niter=50, #used to be 50, then 100, 200, 300, 600
+                                           niter=150, #used to be 50, then 100, 200, 300, 600
                                        stepsize=0.2, #used to be 0.5 #then was 0.1, 0.2, 0.3, 0.2
                                        T=0.5,
                                        accept_test=accept_test)
