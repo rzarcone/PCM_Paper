@@ -169,7 +169,9 @@ nbits=6
 # write_read_list = [(1,2),(1,3),(2,1)]
 # write_read_list = [(4,4),(0,4),(1,4),(2,4)]
 # write_read_list = [(3,5)]
-write_read_list = [(2,5)]
+# write_read_list = [(2,5)]
+
+write_read_list = [(3,5)]
 
 #data_file = np.load("Blahut_States.npz")
 #states = data_file['data'].item()['states']
@@ -177,8 +179,8 @@ write_read_list = [(2,5)]
 #states_new[:13] = states[:13]
 #states_new[13:15] = [1.26,1.27]
 #states_new[15] = states[-1]
-data_file = np.load("Blahut_States_8_states.npz")
-states = data_file['data'].item()['source_states_8']
+data_file = np.load("Blahut_States_16_states.npz")
+states_new = data_file['data'].item()['source_states_16']
 
 if new_run:
     C_nonequal = zeros((nbits, nbits))
@@ -264,7 +266,7 @@ for it in range(10):
                                        minimizer_kwargs=minimizer_kwargs,
                                        niter=500, #used to be 50, then 100, then 200, then 300
                                        stepsize=0.5, #used to be 0.5 #then was 0.1, 0.2 #maybe try back to 0.2?
-                                       T=0.5,
+                                       T=0.4, # used to be 0.5
                                        accept_test=accept_test)
         
         print (result)
