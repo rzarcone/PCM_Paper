@@ -265,8 +265,8 @@ for it in range(10):
                                        x0=x0, 
                                        minimizer_kwargs=minimizer_kwargs,
                                        niter=500, #used to be 50, then 100, then 200, then 300
-                                       stepsize=0.5, #used to be 0.5 #then was 0.1, 0.2 #maybe try back to 0.2?
-                                       T=0.4, # used to be 0.5
+                                       stepsize=0.7, #used to be 0.5 #then was 0.1, 0.2, then 0.5 again 
+                                       T=0.3, # used=0.5,0.4 #20180130: if 0.3 & 0.6 doesn't work, try 0.3&0.7,0.4&0.6/0.4
                                        accept_test=accept_test)
         
         print (result)
