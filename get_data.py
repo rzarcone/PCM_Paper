@@ -122,7 +122,7 @@ def get_memristor_data(path, pcm_device, n_mem, num_ext=5, norm_min=-1., norm_ma
     orig_max_Rs = np.amax(Rs)
 
     Vs = normalizer(Vs,norm_min,norm_max)
-    Rs = normalizer(Rs,norm_min,norm_max)
+    Rs = normalizer(Rs,norm_min,norm_max) #20180206: was doing norm_min - 2.5 to get mean to be between -3,3, but stopping 
 
     Vs, Rs, _, _ = range_extender(Vs,Rs,num_ext)
 
