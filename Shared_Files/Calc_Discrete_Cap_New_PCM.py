@@ -4,13 +4,9 @@ import pandas as pd
 from Jesse_Funcs_New.JessePlot import SpecificPlots
 from Jesse_Funcs_New import blahut
 import matplotlib.pyplot as plt
-
 from pylab import *
 from scipy import optimize
-
-
 import Jesse_Funcs_New.JessePlot
-# import Jesse_Funcs_New.blahut as blahut
 import Jesse_Funcs_New.helpers as helpers
 
 
@@ -157,22 +153,34 @@ alphas = np.array([0.5]*7)
 
 V_super, R_super = super_channel(data_path, device_nums, diffs, colors, alphas)
 
-Pyx, x, y = upsample_data(V_super, R_super, to_plot_or_not_to_plot = False, resample_rate = 2000)
+Pyx, x, y = upsample_data(V_super, R_super, to_plot_or_not_to_plot = False, resample_rate = 300)
 
 #==============================================================================
 # %% Nonuniform Spacing
 #==============================================================================
-nonequal_filename = 'C_nonequal_optimized_new_PCM_more_states.npz'
-new_run = False
-nx = 6
-ny = 6
-nbits=5
+nonequal_filename = 'C_nonequal_test_intialize_64_states_8_write.npz'
+new_run = True
+nx = 7
+ny = 7
+nbits=6
 # write_read_list = [(0,0),(0,1),(1,0),(1,1),(0,2),(2,0),(1,2),(2,1),(2,2),(0,3),(3,0),(1,3),(3,1),(2,3),(3,2),(3,3)]
 # write_read_list = [(0,0),(0,1),(1,0),(1,1),(0,2),(2,0),(1,2),(2,1),(2,2)]
 # write_read_list = [(0,3),(3,0),(1,3),(3,1),(2,3),(3,2),(3,3)]
 # write_read_list = [(1,2),(1,3),(2,1)]
 # write_read_list = [(4,4),(0,4),(1,4),(2,4)]
-write_read_list = [(4,3)]
+# write_read_list = [(3,5)]
+# write_read_list = [(2,5)]
+
+write_read_list = [(2,5)]
+
+#data_file = np.load("Blahut_States.npz")
+#states = data_file['data'].item()['states']
+#states_new = np.zeros(16)
+#states_new[:13] = states[:13]
+#states_new[13:15] = [1.26,1.27]
+#states_new[15] = states[-1]
+data_file = np.load("Blahut_States_8_states.npz")
+states_new = data_file['data'].item()['source_states_8']
 
 if new_run:
     C_nonequal = zeros((nbits, nbits))
@@ -216,8 +224,8 @@ def objective(val, Pyx=Pyx, x=x, y=y, nx=nx, ny=ny):
                     x_in = x_in, 
                     y_out = y_out,
                     Px_in = Px_in)
-        savez(nonequal_filename, data=data)  
-        
+        savez(nonequal_filename, data=data)    
+
     return -C
 
 def accept_test(f_new, x_new, f_old, x_old):
@@ -233,12 +241,13 @@ def find_peaks(Px):
     peak = logical_and( logical_and(Px > append(0, Px[:-1]), Px > append(Px[1:],0)), Px > 2e-4)
     return where(peak)
 
-for it in range(200):
+for it in range(20): 
     print (it)
     for ix, iy in write_read_list:
         ny, nx = (xy[0][ix,iy], xy[1][ix,iy])
     
-        xinputs = rand(nx) * abs(xr[2]-xr[0]) + xr[0]
+#         xinputs = rand(nx) * abs(xr[2]-xr[0]) + xr[0]
+        xinputs = states_new
         ydividers = rand(ny-1) * abs(yr[2]-yr[0]) + yr[0]    
         xinputs = sort(xinputs)
         ydividers = sort(ydividers)          
@@ -255,15 +264,19 @@ for it in range(200):
         result = optimize.basinhopping(objective, 
                                        x0=x0, 
                                        minimizer_kwargs=minimizer_kwargs,
-                                           niter=150, #used to be 50, then 100, 200, 300, 600
-                                       stepsize=0.2, #used to be 0.5 #then was 0.1, 0.2, 0.3, 0.2
-                                       T=0.5,
+                                       niter=750, #used to be 50, then 100, then 200, then 300
+                                       stepsize=0.8, #used to be 0.5 #then was 0.1, 0.2, then 0.5 again 
+                                       T=0.15, # used=0.5,0.4 #20180130: if 0.3 & 0.6 doesn't work, try 0.3&0.7,0.4&0.6/0.4
                                        accept_test=accept_test)
         
         print (result)
-               
+#20180131: niter=500, stepsize=0.7, T=0.3 worked well for (3,5) (got up to 2.008). Will try increasing stepsize again (0.8),
+# 0.8 worked well, so well try doing 0.9. If that doesn't work, will do T=0.2, stepsize=0.8 
+#20180202: changed T=0.1, keep stepsize=0.8
+#20180203: changed T=0.1, stepsize=0.9
+#20180206: changed T=0.1, stepsize = 0.8, niter = 750
 data = dict(C_nonequal=C_nonequal,
             x_in = x_in, 
             y_out = y_out,
             Px_in = Px_in)
-savez(nonequal_filename, data=data)  
+savez(nonequal_filename, data=data)   
